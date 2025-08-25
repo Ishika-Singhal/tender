@@ -16,6 +16,11 @@ const uploadRoutes = require('./routes/uploadRoute');
 
 const app = express();
 
+app.use((req, res, next) => {
+  console.log(`📥 ${req.method} ${req.originalUrl}`)
+  next()
+})
+
 // Security middleware
 app.use(helmet());
 app.use(cors({
@@ -55,12 +60,13 @@ app.get('/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/tenders', tenderRoutes);
 app.use('/api/bids', bidRoutes);
 app.use('/api/admin', adminRoutes);
-app.use('/api/uploads', uploadRoutes);
+app.use('/api/upload', uploadRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {

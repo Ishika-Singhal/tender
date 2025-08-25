@@ -1,5 +1,5 @@
-import express from 'express'
-import {
+const express = require('express')
+const {
   upload,
   uploadSingle,
   uploadMultiple,
@@ -7,12 +7,17 @@ import {
   deleteMultiple,
   getCloudinaryConfig,
   getSignedUploadParams
-} from '../controllers/upload.controller.js'
-import auth from '../middleware/auth.js'
+} = require('../controllers/uploadController')
+const auth = require('../middleware/auth')
 
 const router = express.Router()
 
-// All upload routes require authentication
+// Test route (public)
+router.get('/test', (req, res) => {
+  res.json({ message: 'Upload routes are working!' })
+})
+
+// All other upload routes require authentication
 router.use(auth)
 
 // Upload single file
@@ -33,4 +38,4 @@ router.get('/config', getCloudinaryConfig)
 // Get signed upload parameters
 router.get('/signed-params', getSignedUploadParams)
 
-export default router
+module.exports = router

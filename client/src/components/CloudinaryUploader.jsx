@@ -35,6 +35,8 @@ const CloudinaryUploader = ({
   const uploadToServer = async (files) => {
     const formData = new FormData()
     
+    console.log('📤 Starting upload with files:', files.length)
+    
     if (multiple && files.length > 1) {
       // Upload multiple files
       files.forEach(file => {
@@ -42,9 +44,6 @@ const CloudinaryUploader = ({
       })
       
       const response = await api.post('/upload/multiple', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        },
         onUploadProgress: (progressEvent) => {
           const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total)
           setUploadProgress({ overall: progress })
@@ -57,9 +56,6 @@ const CloudinaryUploader = ({
       formData.append('file', files[0])
       
       const response = await api.post('/upload/single', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        },
         onUploadProgress: (progressEvent) => {
           const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total)
           setUploadProgress({ [files[0].name]: progress })
@@ -96,8 +92,16 @@ const CloudinaryUploader = ({
       // Reset the input
       e.target.value = ''
     } catch (err) {
-      console.error('Upload error:', err)
-      setError(err.response?.data?.error || err.message || 'Upload failed')
+      console.error('❌ Upload error:', err)
+      
+      let errorMessage = 'Upload failed'
+      if (err.response?.data?.error) {
+        errorMessage = err.response.data.error
+      } else if (err.message) {
+        errorMessage = err.message
+      }
+      
+      setError(errorMessage)
     } finally {
       setUploading(false)
     }

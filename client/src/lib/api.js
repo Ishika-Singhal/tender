@@ -1,6 +1,9 @@
 import axios from 'axios'
 
+// This should match your backend port
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api'
+
+console.log('🔗 API Base URL:', API_BASE_URL) // Debug log
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -9,54 +12,25 @@ const api = axios.create({
   }
 })
 
-// Request interceptor to add auth token
+// Remove Content-Type for file uploads - let axios handle it
 api.interceptors.request.use(
   (config) => {
+    // Debug log
+    console.log('🚀 Full request URL:', config.baseURL + config.url)
+    
     const token = localStorage.getItem('accessToken')
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
-    return config
-  },
-  (error) => {
-    return Promise.reject(error)
-  }
-)
-
-// Response interceptor to handle token refresh
-api.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const original = error.config
-
-    if (error.response?.status === 401 && !original._retry) {
-      original._retry = true
-      
-      const refreshToken = localStorage.getItem('refreshToken')
-      if (refreshToken) {
-        try {
-          const response = await axios.post(`${API_BASE_URL}/auth/refresh`, {
-            token: refreshToken
-          })
-          
-          const { accessToken } = response.data
-          localStorage.setItem('accessToken', accessToken)
-          
-          original.headers.Authorization = `Bearer ${accessToken}`
-          return api(original)
-        } catch (refreshError) {
-          localStorage.removeItem('accessToken')
-          localStorage.removeItem('refreshToken')
-          localStorage.removeItem('user')
-          window.location.href = '/login'
-        }
-      } else {
-        window.location.href = '/login'
-      }
+    
+    // Don't set Content-Type for FormData
+    if (config.data instanceof FormData) {
+      delete config.headers['Content-Type']
     }
     
-    return Promise.reject(error)
-  }
+    return config
+  },
+  (error) => Promise.reject(error)
 )
 
 export default api
