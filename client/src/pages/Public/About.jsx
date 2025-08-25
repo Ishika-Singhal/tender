@@ -1,26 +1,7 @@
 import React from 'react'
 
 const About = () => {
-  const team = [
-    {
-      name: 'John Smith',
-      role: 'CEO & Founder',
-      image: '👨‍💼',
-      description: 'Visionary leader with 15+ years in business development'
-    },
-    {
-      name: 'Sarah Johnson',
-      role: 'CTO',
-      image: '👩‍💻',
-      description: 'Technology expert specializing in marketplace platforms'
-    },
-    {
-      name: 'Mike Davis',
-      role: 'Head of Operations',
-      image: '👨‍🔧',
-      description: 'Operations specialist ensuring smooth platform functionality'
-    }
-  ]
+  
 
   const values = [
     {
@@ -137,22 +118,7 @@ const About = () => {
               The passionate individuals behind Tender Infinity's success.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {team.map((member, index) => (
-              <div key={index} className="card text-center">
-                <div className="text-6xl mb-4">{member.image}</div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-                  {member.name}
-                </h3>
-                <p className="text-light-primary dark:text-dark-primary font-semibold mb-3">
-                  {member.role}
-                </p>
-                <p className="text-gray-600 dark:text-gray-400">
-                  {member.description}
-                </p>
-              </div>
-            ))}
-          </div>
+          
         </section>
 
         {/* Stats Section */}

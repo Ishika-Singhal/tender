@@ -189,18 +189,7 @@ const Contact = () => {
               ))}
             </div>
 
-            {/* FAQ Link */}
-            <div className="card bg-light-primary dark:bg-dark-primary text-white">
-              <h3 className="text-lg font-semibold mb-2">
-                Frequently Asked Questions
-              </h3>
-              <p className="mb-4 opacity-90">
-                Looking for quick answers? Check out our comprehensive FAQ section.
-              </p>
-              <button className="btn bg-white text-light-primary hover:bg-gray-100">
-                View FAQ
-              </button>
-            </div>
+           
 
             {/* Support Hours */}
             <div className="card bg-gray-50 dark:bg-gray-900">

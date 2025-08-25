@@ -45,7 +45,7 @@ const PostTender = () => {
         formData.append('upload_preset', 'tender-infinity')
         
         const response = await fetch(
-          `https://api.cloudinary.com/v1_1/${process.env.VITE_CLOUDINARY_CLOUD_NAME}/upload`,
+          `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/upload`,
           {
             method: 'POST',
             body: formData
