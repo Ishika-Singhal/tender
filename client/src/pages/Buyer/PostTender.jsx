@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../../lib/api'
+import CloudinaryUploader from '../../components/CloudinaryUploader'
+import FileViewer from '../../components/FileViewer'
 
 const PostTender = () => {
   const navigate = useNavigate()
@@ -16,7 +18,6 @@ const PostTender = () => {
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [uploading, setUploading] = useState(false)
 
   const categories = [
     'IT & Software',
@@ -34,45 +35,14 @@ const PostTender = () => {
     if (error) setError('')
   }
 
-  const handleFileUpload = async (files) => {
-    if (!files.length) return
-
-    setUploading(true)
-    try {
-      const uploadPromises = Array.from(files).map(async (file) => {
-        const formData = new FormData()
-        formData.append('file', file)
-        formData.append('upload_preset', 'tender-infinity')
-        
-        const response = await fetch(
-          `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/upload`,
-          {
-            method: 'POST',
-            body: formData
-          }
-        )
-        
-        const data = await response.json()
-        return {
-          url: data.secure_url,
-          name: file.name
-        }
-      })
-
-      const uploadedFiles = await Promise.all(uploadPromises)
-      setFormData(prev => ({
-        ...prev,
-        documents: [...prev.documents, ...uploadedFiles]
-      }))
-    } catch (error) {
-      console.error('Upload error:', error)
-      setError('Failed to upload files. Please try again.')
-    } finally {
-      setUploading(false)
-    }
+  const handleFileUpload = (uploadedFiles) => {
+    setFormData(prev => ({
+      ...prev,
+      documents: [...prev.documents, ...uploadedFiles]
+    }))
   }
 
-  const removeDocument = (index) => {
+  const handleFileRemove = (index) => {
     setFormData(prev => ({
       ...prev,
       documents: prev.documents.filter((_, i) => i !== index)
@@ -99,7 +69,14 @@ const PostTender = () => {
     }
 
     try {
-      await api.post('/tenders', formData)
+      const tenderData = {
+        ...formData,
+        budgetMin: Number(formData.budgetMin),
+        budgetMax: Number(formData.budgetMax),
+        deadline: new Date(formData.deadline).toISOString()
+      }
+      
+      await api.post('/tenders', tenderData)
       navigate('/buyer/tenders')
     } catch (error) {
       setError(error.response?.data?.error || 'Failed to create tender')
@@ -289,71 +266,34 @@ const PostTender = () => {
               Supporting Documents
             </h2>
             
-            <div>
-              <label className="label">
-                Upload Documents (Optional)
-              </label>
-              <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-md">
-                <div className="space-y-1 text-center">
-                  <svg
-                    className="mx-auto h-12 w-12 text-gray-400"
-                    stroke="currentColor"
-                    fill="none"
-                    viewBox="0 0 48 48"
-                  >
-                    <path
-                      d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                      strokeWidth={2}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                  <div className="flex text-sm text-gray-600 dark:text-gray-400">
-                    <label className="relative cursor-pointer rounded-md font-medium text-light-primary dark:text-dark-primary hover:underline">
-                      <span>Upload files</span>
-                      <input
-                        type="file"
-                        className="sr-only"
-                        multiple
-                        accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                        onChange={(e) => handleFileUpload(e.target.files)}
-                      />
-                    </label>
-                    <p className="pl-1">or drag and drop</p>
-                  </div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    PDF, DOC, DOCX, JPG, PNG up to 10MB each
-                  </p>
-                </div>
+            <div className="space-y-6">
+              <div>
+                <label className="label">
+                  Upload Documents (Optional)
+                </label>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                  Upload relevant documents such as requirements, specifications, or reference materials.
+                </p>
+                
+                <CloudinaryUploader
+                  onUpload={handleFileUpload}
+                  maxFiles={5}
+                  acceptedTypes={['image/*', '.pdf', '.doc', '.docx', '.txt']}
+                  maxSize={10 * 1024 * 1024} // 10MB
+                />
               </div>
 
-              {uploading && (
-                <div className="mt-4 flex items-center">
-                  <div className="spinner mr-2"></div>
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Uploading files...</span>
-                </div>
-              )}
-
               {formData.documents.length > 0 && (
-                <div className="mt-4 space-y-2">
-                  <h4 className="font-medium text-gray-900 dark:text-gray-100">Uploaded Documents:</h4>
-                  {formData.documents.map((doc, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        <div className="text-xl">📎</div>
-                        <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                          {doc.name}
-                        </span>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => removeDocument(index)}
-                        className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300"
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  ))}
+                <div>
+                  <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-3">
+                    Uploaded Documents ({formData.documents.length})
+                  </h4>
+                  <FileViewer
+                    files={formData.documents}
+                    onRemove={handleFileRemove}
+                    showRemove={true}
+                    showPreview={true}
+                  />
                 </div>
               )}
             </div>
@@ -370,7 +310,7 @@ const PostTender = () => {
             </button>
             <button
               type="submit"
-              disabled={loading || uploading}
+              disabled={loading}
               className="btn btn-primary flex-1 flex items-center justify-center"
             >
               {loading && <div className="spinner mr-2"></div>}

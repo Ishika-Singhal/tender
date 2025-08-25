@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import api from '../../lib/api'
+import FileViewer from '../../components/FileViewer'
 
 const TenderDetail = () => {
   const { id } = useParams()
@@ -106,15 +107,15 @@ const TenderDetail = () => {
               Browse Tenders
             </Link>
             <span className="mx-2">›</span>
-            <span>{tender.title}</span>
+            <span className="truncate">{tender.title}</span>
           </nav>
           
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-            <div>
+            <div className="flex-1">
               <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
                 {tender.title}
               </h1>
-              <div className="flex items-center space-x-3">
+              <div className="flex flex-wrap items-center gap-3">
                 <span className={getStatusBadge(tender.status)}>
                   {tender.status.charAt(0).toUpperCase() + tender.status.slice(1)}
                 </span>
@@ -145,7 +146,7 @@ const TenderDetail = () => {
                 Description
               </h2>
               <div className="prose dark:prose-invert max-w-none">
-                <p className="whitespace-pre-wrap text-gray-700 dark:text-gray-300">
+                <p className="whitespace-pre-wrap text-gray-700 dark:text-gray-300 leading-relaxed">
                   {tender.description}
                 </p>
               </div>
@@ -155,29 +156,20 @@ const TenderDetail = () => {
             {tender.documents && tender.documents.length > 0 && (
               <div className="card">
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
-                  Documents
+                  Project Documents
                 </h2>
-                <div className="space-y-2">
-                  {tender.documents.map((doc, index) => (
-                    <div key={index} className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                      <div className="text-2xl">📎</div>
-                      <div>
-                        <a
-                          href={doc.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-light-primary dark:text-dark-primary hover:underline font-medium"
-                        >
-                          {doc.name}
-                        </a>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                  Download or preview the project requirements and specifications.
+                </p>
+                <FileViewer
+                  files={tender.documents}
+                  showRemove={false}
+                  showPreview={true}
+                />
               </div>
             )}
 
-            {/* Action Buttons for Non-Sellers */}
+            {/* Action Section for Non-Sellers */}
             {!canApply && (
               <div className="card bg-gray-50 dark:bg-gray-900">
                 <div className="text-center">
@@ -189,12 +181,12 @@ const TenderDetail = () => {
                       <p className="text-gray-600 dark:text-gray-400 mb-4">
                         Please log in or register as a seller to apply.
                       </p>
-                      <div className="space-x-4">
+                      <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <Link to="/login" className="btn btn-primary">
                           Login
                         </Link>
                         <Link to="/register" className="btn btn-secondary">
-                          Register
+                          Register as Seller
                         </Link>
                       </div>
                     </>
@@ -273,6 +265,11 @@ const TenderDetail = () => {
                   <p className={`font-medium ${isExpired ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-gray-100'}`}>
                     {formatDate(tender.deadline)}
                   </p>
+                  {isExpired && (
+                    <p className="text-xs text-red-500 dark:text-red-400 mt-1">
+                      This tender has expired
+                    </p>
+                  )}
                 </div>
                 
                 <div>
@@ -312,14 +309,14 @@ const TenderDetail = () => {
             {canApply && (
               <div className="card bg-light-primary dark:bg-dark-primary text-white">
                 <h3 className="text-lg font-semibold mb-2">
-                  Ready to Apply?
+                  Ready to Apply? 🚀
                 </h3>
                 <p className="mb-4 opacity-90">
                   Submit your proposal and showcase your expertise to win this project.
                 </p>
                 <button
                   onClick={handleApply}
-                  className="btn bg-white text-light-primary hover:bg-gray-100 w-full"
+                  className="btn bg-white text-light-primary hover:bg-gray-100 dark:text-dark-primary w-full"
                 >
                   Apply Now
                 </button>

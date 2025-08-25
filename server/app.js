@@ -26,8 +26,10 @@ app.use(cors({
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100,
-  message: { error: 'Too many requests, please try again later' }
+  max: 1000,
+  message: { error: 'Too many requests, please try again later' },
+  standardHeaders: true,
+  legacyHeaders: false
 });
 app.use(limiter);
 
@@ -35,6 +37,14 @@ app.use(limiter);
 if (process.env.NODE_ENV !== 'production') {
   app.use(morgan('dev'));
 }
+
+const uploadLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 50, // 50 uploads per 15 minutes
+  message: 'Too many upload requests',
+  skip: (req) => !req.path.startsWith('/api/upload')
+})
+app.use('/api/upload', uploadLimiter)
 
 // Body parsing
 app.use(express.json({ limit: '10mb' }));

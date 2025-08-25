@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import api from '../../lib/api'
+import FileViewer from '../../components/FileViewer'
 
 const ViewBids = () => {
   const { id } = useParams()
@@ -115,7 +116,7 @@ const ViewBids = () => {
               My Tenders
             </Link>
             <span className="mx-2">›</span>
-            <span>{tender?.title}</span>
+            <span className="truncate">{tender?.title}</span>
             <span className="mx-2">›</span>
             <span>Bids</span>
           </nav>
@@ -233,21 +234,11 @@ const ViewBids = () => {
                     <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">
                       Attachments:
                     </h4>
-                    <div className="space-y-2">
-                      {bid.attachments.map((attachment, index) => (
-                        <div key={index} className="flex items-center space-x-3 p-2 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                          <div className="text-xl">📎</div>
-                          <a
-                            href={attachment.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-light-primary dark:text-dark-primary hover:underline font-medium"
-                          >
-                            {attachment.name}
-                          </a>
-                        </div>
-                      ))}
-                    </div>
+                    <FileViewer
+                      files={bid.attachments}
+                      showRemove={false}
+                      showPreview={true}
+                    />
                   </div>
                 )}
 
