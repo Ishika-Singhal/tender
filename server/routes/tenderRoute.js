@@ -18,7 +18,7 @@ router.get('/:id', getTender);
 
 // Protected routes
 router.post('/', auth, requireRole('buyer'), createTender);
-router.patch('/:id', auth, requireRole('buyer'), updateTender);
+router.patch('/:id/update', auth, requireRole('buyer'), updateTender);
 router.post('/:id/close', auth, requireRole('buyer'), closeTender);
 router.delete('/:id', auth, requireRole('buyer'), deleteTender);
 

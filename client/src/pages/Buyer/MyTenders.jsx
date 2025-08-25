@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import api from '../../lib/api'
 import TenderCard from '../../components/TenderCard'
@@ -12,7 +12,7 @@ const MyTenders = () => {
   const [showModal, setShowModal] = useState(false)
   const [selectedTender, setSelectedTender] = useState(null)
   const [modalAction, setModalAction] = useState('')
-
+  const navigate = useNavigate()
   useEffect(() => {
     fetchTenders()
   }, [])
@@ -46,8 +46,11 @@ const MyTenders = () => {
   })
 
   const handleEdit = (tender) => {
-    // Navigate to edit form - for now just show alert
-    alert('Edit functionality would redirect to edit form')
+      if (tender.status === 'open') {
+      navigate(`/buyer/edit-tender/${tender._id}`)
+    } else {
+      alert('Only open tenders can be edited')
+    }
   }
 
   const handleClose = (tender) => {

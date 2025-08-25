@@ -79,7 +79,7 @@ const TenderCard = ({ tender, showActions = false, onEdit, onClose, onDelete }) 
         )}
       </div>
 
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center gap-3">
         <Link 
           to={`/tenders/${tender._id}`}
           className="btn btn-primary text-sm"

@@ -36,6 +36,7 @@ import Profile from './pages/Utility/Profile'
 import Settings from './pages/Utility/Settings'
 import Notifications from './pages/Utility/Notifications'
 import NotFound from './pages/Utility/NotFound'
+import EditTender from './pages/Buyer/EditTender'
 
 function App() {
   return (
@@ -68,11 +69,18 @@ function App() {
               <PostTender />
             </Protected>
           } />
+
           <Route path="/buyer/tenders/:id/bids" element={
             <Protected roles={['buyer']}>
               <ViewBids />
             </Protected>
           } />
+          <Route path="/buyer/edit-tender/:id/" element={
+            <Protected roles={['buyer']}>
+              <EditTender />
+            </Protected>
+          } />
+
           <Route path="/buyer/awarded" element={
             <Protected roles={['buyer']}>
               <AwardedTenders />

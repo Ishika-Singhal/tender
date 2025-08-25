@@ -113,6 +113,7 @@ const createTender = async (req, res) => {
 
 // Update tender (buyer owner only)
 const updateTender = async (req, res) => {
+
   try {
     const tender = await Tender.findById(req.params.id);
 
@@ -131,10 +132,12 @@ const updateTender = async (req, res) => {
     const updatedTender = await Tender.findByIdAndUpdate(
       req.params.id,
       req.body,
-      { new: true, runValidators: true }
+      { new: true}
     ).populate('buyerId', 'name email');
 
     res.json(updatedTender);
+
+    console.log("hello");
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
