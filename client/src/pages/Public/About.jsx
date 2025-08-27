@@ -108,19 +108,7 @@ const About = () => {
           </div>
         </section>
 
-        {/* Team Section */}
-        <section className="mb-20">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-              Meet Our Team
-            </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400">
-              The passionate individuals behind Tender Infinity's success.
-            </p>
-          </div>
-          
-        </section>
-
+        
         {/* Stats Section */}
         <section className="mb-20">
           <div className="bg-gray-50 dark:bg-gray-900 rounded-2xl p-8">
